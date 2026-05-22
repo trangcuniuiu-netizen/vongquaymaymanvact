@@ -3,22 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Vòng Quay May Mắn 12A1</title>
+    <!-- Font chữ đẹp từ Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #eef2f3; font-family: sans-serif; margin: 0; }
-        h1 { color: #1e3a8a; margin-bottom: 20px; }
-        
-        .wheel { 
-            width: 320px; height: 320px; border-radius: 50%; border: 10px solid #fff;
-            position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            /* Vòng quay nhiều màu */
-            background: conic-gradient(
-                #ef4444 0deg 72deg, #f97316 72deg 144deg, #eab308 144deg 216deg, 
-                #22c55e 216deg 288deg, #3b82f6 288deg 360deg
-            );
+        body { 
+            margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: linear-gradient(135deg, #e0eafc, #cfdef3); font-family: 'Roboto', sans-serif; 
         }
-        .pointer { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #000; margin-bottom: 5px; }
-        button { margin-top: 30px; padding: 15px 40px; font-size: 20px; background: #1e3a8a; color: #fff; border: none; border-radius: 10px; cursor: pointer; }
+        h1 { font-family: 'Montserrat', sans-serif; color: #1e3a8a; margin-bottom: 20px; text-transform: uppercase; }
+
+        .wheel { 
+            width: 300px; height: 300px; border-radius: 50%; border: 12px solid #fff;
+            position: relative; transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: conic-gradient(#ef4444 0deg 72deg, #f97316 72deg 144deg, #eab308 144deg 216deg, #22c55e 216deg 288deg, #3b82f6 288deg 360deg);
+        }
+        .pointer { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #1e3a8a; margin-bottom: 5px; }
+
+        button { 
+            margin-top: 40px; padding: 15px 50px; font-size: 20px; font-weight: bold; font-family: 'Montserrat';
+            background: #1e3a8a; color: white; border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3); transition: 0.3s;
+        }
+        button:hover { background: #172554; transform: scale(1.05); }
+
+        /* Bảng Popup tự thiết kế */
+        #resultPopup { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            text-align: center; width: 300px; z-index: 100;
+        }
     </style>
 </head>
 <body>
@@ -26,38 +41,39 @@
     <h1>Vòng Quay 12A1</h1>
     <div class="pointer"></div>
     <div id="wheel" class="wheel"></div>
-    <button onclick="quay()">QUAY NGAY</button>
+    <button id="spinBtn" onclick="quay()">QUAY NGAY!</button>
+
+    <div id="resultPopup">
+        <h2 id="rScore" style="color: #1e3a8a; margin:0;"></h2>
+        <p id="rWish" style="font-weight: bold; margin: 15px 0;"></p>
+        <p id="rAdvice" style="font-style: italic; color: #555; font-size: 0.9em;"></p>
+        <button style="padding: 10px 20px; margin-top:10px;" onclick="dongPopup()">Đóng</button>
+    </div>
 
     <script>
         const scores = [800, 900, 1000, 1050, 1200];
-        const wishes = [
-            "Chúc mừng bạn! Kết quả xứng đáng với nỗ lực của bạn.",
-            "Đỉnh quá! Bạn thực sự là chiến binh 12A1.",
-            "Tuyệt vời! Phong độ này sẽ giúp bạn tỏa sáng.",
-            "Wow! Vận may 12A1 đang gọi tên bạn.",
-            "Kết quả này khẳng định bản lĩnh của bạn!"
-        ];
-        const advices = [
-            "Tô phiếu cẩn thận, nhớ kiểm tra mã đề hai lần nhé.",
-            "Bình tĩnh đọc kỹ đề, vội vàng là kẻ thù của điểm số.",
-            "Phân bổ thời gian hợp lý, giữ cái đầu lạnh bạn nhé.",
-            "Sự chỉn chu trong chi tiết nhỏ tạo nên khác biệt lớn.",
-            "Giữ nhịp thở đều, tâm trí tĩnh lặng để làm bài tốt nhất."
-        ];
+        const wishes = ["Đỉnh quá! Xứng đáng là dân 12A1!", "Kết quả này cho thấy bạn là người có thực lực!", "Wow, vận may đang mỉm cười với bạn!"];
+        const advices = ["Nhớ tô phiếu cẩn thận nhé!", "Bình tĩnh, đọc kỹ đề trước khi tô!", "Đừng vội vàng, cứ chắc chắn từng câu một!"];
 
         function quay() {
+            const btn = document.getElementById('spinBtn');
             const wheel = document.getElementById('wheel');
-            const randomDeg = Math.floor(Math.random() * 3600) + 1800;
-            wheel.style.transform = `rotate(${randomDeg}deg)`;
+            btn.disabled = true;
+            const deg = Math.floor(Math.random() * 3600) + 1800;
+            wheel.style.transform = `rotate(${deg}deg)`;
 
             setTimeout(() => {
-                const index = Math.floor((randomDeg % 360) / 72);
-                const score = scores[index];
-                const wish = wishes[Math.floor(Math.random() * wishes.length)];
-                const advice = advices[Math.floor(Math.random() * advices.length)];
-                
-                alert(`🎯 ĐIỂM SỐ: ${score} VACT\n\n✨ ${wish}\n\n💡 ${advice}`);
+                const idx = Math.floor((deg % 360) / 72);
+                document.getElementById('rScore').innerText = scores[idx] + " VACT";
+                document.getElementById('rWish').innerText = wishes[Math.floor(Math.random() * wishes.length)];
+                document.getElementById('rAdvice').innerText = "💡 " + advices[Math.floor(Math.random() * advices.length)];
+                document.getElementById('resultPopup').style.display = 'block';
             }, 5100);
+        }
+
+        function dongPopup() {
+            document.getElementById('resultPopup').style.display = 'none';
+            document.getElementById('spinBtn').disabled = false;
         }
     </script>
 </body>
