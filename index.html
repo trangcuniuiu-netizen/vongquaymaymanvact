@@ -2,23 +2,40 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vòng Quay May Mắn 12A1</title>
     <!-- Thư viện Pháo hoa & Popup -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        :root { --primary: #2563eb; --bg: #f0f7ff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        h1 { color: var(--primary); margin-bottom: 30px; font-weight: 800; text-transform: uppercase; }
+        :root { --primary: #2563eb; --accent: #3b82f6; --bg: #f0f7ff; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: radial-gradient(circle, #ffffff, #e0e7ff); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
         
-        .wheel-container { position: relative; }
-        #wheel { width: 350px; height: 350px; border-radius: 50%; border: 10px solid var(--primary); transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); background: conic-gradient(#3b82f6 0deg 72deg, #60a5fa 72deg 144deg, #93c5fd 144deg 216deg, #bfdbfe 216deg 288deg, #dbeafe 288deg 360deg); }
-        .pointer { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #dc2626; z-index: 10; }
+        h1 { color: var(--primary); margin-bottom: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
         
-        button { margin-top: 50px; padding: 15px 50px; font-size: 20px; cursor: pointer; background: var(--primary); color: white; border: none; border-radius: 30px; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
-        button:hover { transform: scale(1.05); background: #1d4ed8; }
-        button:disabled { background: #94a3b8; cursor: not-allowed; }
+        .wheel-container { position: relative; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); }
+        
+        #wheel { 
+            width: 350px; height: 350px; border-radius: 50%; 
+            border: 12px solid #ffffff; 
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.1), 0 0 20px rgba(37, 99, 235, 0.2);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); 
+            background: conic-gradient(#3b82f6 0deg 72deg, #60a5fa 72deg 144deg, #93c5fd 144deg 216deg, #bfdbfe 216deg 288deg, #dbeafe 288deg 360deg); 
+        }
+        
+        .pointer { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid #ef4444; z-index: 10; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); }
+        
+        button { 
+            margin-top: 50px; padding: 18px 60px; font-size: 22px; cursor: pointer; 
+            background: linear-gradient(135deg, #2563eb, #1d4ed8); 
+            color: white; border: none; border-radius: 50px; font-weight: bold; 
+            transition: 0.3s; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        button:hover { transform: scale(1.08); box-shadow: 0 12px 25px rgba(37, 99, 235, 0.6); }
+        button:active { transform: scale(0.95); }
+        button:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -32,23 +49,18 @@
 
     <script>
         const scores = [1200, 1050+, 1000+, 900+, 800+];
-        
         const wishes = [
             "Chúc mừng bạn! Kết quả này hoàn toàn xứng đáng với sự nỗ lực của bạn.",
             "Đỉnh quá! Bạn đã chứng minh được bản lĩnh của một chiến binh 12A1 thực thụ.",
             "Quá tuyệt vời! Nhìn cách bạn làm bài là thấy ngay phong độ đỉnh cao rồi.",
-            "Thật ấn tượng! Vận may này là phần thưởng cho thái độ học tập nghiêm túc của bạn.",
-            "Đẳng cấp là mãi mãi! Kết quả này chính là cột mốc khẳng định sự bứt phá của bạn.",
-            "Chúc mừng bạn đã chinh phục thử thách! Hãy cứ tự tin như thế, vì bạn rất giỏi!"
+            "Thật ấn tượng! Vận may này là phần thưởng cho thái độ học tập nghiêm túc của bạn."
         ];
-
         const advices = [
-            "Tô phiếu cẩn thận, nhớ kiểm tra mã đề hai lần nhé. Đừng để mất điểm oan vì sự chủ quan!",
-            "Bình tĩnh đọc kỹ từng chữ trong đề, sự vội vàng là kẻ thù lớn nhất của điểm số cao.",
-            "Phân bổ thời gian hợp lý, câu nào bí quá hãy bỏ qua, giữ cái đầu lạnh để làm câu sau.",
+            "Tô phiếu cẩn thận, nhớ kiểm tra mã đề hai lần nhé. Đừng để mất điểm oan!",
+            "Bình tĩnh đọc kỹ từng chữ trong đề, sự vội vàng là kẻ thù lớn nhất.",
+            "Phân bổ thời gian hợp lý, câu nào bí quá hãy bỏ qua, giữ cái đầu lạnh nhé!",
             "Tô kín ô, nét đậm rõ ràng. Sự chỉn chu trong chi tiết nhỏ sẽ tạo nên thành công lớn.",
-            "Giữ nhịp thở đều, thả lỏng vai. Khi tâm trí tĩnh lặng, bạn sẽ làm bài hiệu quả nhất.",
-            "Kiểm tra lại đáp án trước khi nộp bài 5 phút. Sự cẩn trọng là vũ khí mạnh nhất của bạn."
+            "Giữ nhịp thở đều, thả lỏng vai. Khi tâm trí tĩnh lặng, bạn sẽ làm bài hiệu quả nhất."
         ];
 
         function spin() {
@@ -56,26 +68,25 @@
             const btn = document.getElementById('spinBtn');
             
             btn.disabled = true;
-            
             const randomRotation = Math.floor(Math.random() * 360) + 2000;
             wheel.style.transform = `rotate(${randomRotation}deg)`;
 
             setTimeout(() => {
                 const index = Math.floor((randomRotation % 360) / 72);
-                
                 confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
                 
                 Swal.fire({
                     title: 'Chúc mừng bạn!',
-                    html: `<div style="font-size: 28px; color: #2563eb; font-weight: 800; margin-bottom: 10px;">${scores[index]} VACT</div>
+                    html: `<div style="font-size: 32px; color: #2563eb; font-weight: 800; margin: 10px 0;">${scores[index]} VACT</div>
                            <p style="font-size: 18px; font-weight: 500;">${wishes[Math.floor(Math.random() * wishes.length)]}</p>
-                           <hr><p style="font-size: 16px; font-style: italic; color: #475569;">💡 ${advices[Math.floor(Math.random() * advices.length)]}</p>`,
+                           <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;">
+                           <p style="font-size: 16px; font-style: italic; color: #475569;">💡 ${advices[Math.floor(Math.random() * advices.length)]}</p>`,
                     icon: 'success',
                     confirmButtonText: 'Đã rõ, mình sẽ làm tốt!',
                     confirmButtonColor: '#2563eb'
+                }).then(() => {
+                    btn.disabled = false;
                 });
-                
-                btn.disabled = false;
             }, 4000);
         }
     </script>
