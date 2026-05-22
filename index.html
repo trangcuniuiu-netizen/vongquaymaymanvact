@@ -3,62 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <title>Vòng Quay May Mắn 12A1</title>
-    <!-- Font chữ đẹp từ Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     
     <style>
+        /* Giao diện chung */
         body { 
-            margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; 
             background: linear-gradient(135deg, #e0eafc, #cfdef3); font-family: 'Roboto', sans-serif; 
         }
-        h1 { font-family: 'Montserrat', sans-serif; color: #1e3a8a; margin-bottom: 20px; text-transform: uppercase; }
+        h1 { font-family: 'Montserrat', sans-serif; color: #1e3a8a; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px; }
 
+        /* Vòng quay */
+        .wheel-container { position: relative; }
         .wheel { 
-            width: 300px; height: 300px; border-radius: 50%; border: 12px solid #fff;
+            width: 320px; height: 320px; border-radius: 50%; border: 12px solid #ffffff;
             position: relative; transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            background: conic-gradient(#ef4444 0deg 72deg, #f97316 72deg 144deg, #eab308 144deg 216deg, #22c55e 216deg 288deg, #3b82f6 288deg 360deg);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            /* Vòng quay chia 5 màu rực rỡ */
+            background: conic-gradient(
+                #ef4444 0deg 72deg,    /* Đỏ */
+                #f97316 72deg 144deg,  /* Cam */
+                #eab308 144deg 216deg,  /* Vàng */
+                #22c55e 216deg 288deg,  /* Xanh lá */
+                #3b82f6 288deg 360deg   /* Xanh dương */
+            );
         }
-        .pointer { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #1e3a8a; margin-bottom: 5px; }
+        .pointer { 
+            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; 
+            border-top: 40px solid #1e3a8a; z-index: 10;
+        }
 
+        /* Nút quay */
         button { 
-            margin-top: 40px; padding: 15px 50px; font-size: 20px; font-weight: bold; font-family: 'Montserrat';
+            margin-top: 50px; padding: 18px 60px; font-size: 20px; font-weight: bold; font-family: 'Montserrat';
             background: #1e3a8a; color: white; border: none; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3); transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.4); transition: 0.3s;
         }
-        button:hover { background: #172554; transform: scale(1.05); }
+        button:hover { transform: scale(1.05); background: #172554; }
+        button:disabled { background: #94a3b8; cursor: not-allowed; }
 
-        /* Bảng Popup tự thiết kế */
+        /* Popup kết quả */
         #resultPopup { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; padding: 30px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            text-align: center; width: 300px; z-index: 100;
+            background: white; padding: 40px; border-radius: 25px; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            text-align: center; width: 320px; z-index: 100;
         }
+        #resultPopup h2 { color: #1e3a8a; font-family: 'Montserrat'; font-size: 28px; margin: 0; }
+        #resultPopup p { font-weight: 500; margin: 20px 0; }
+        #resultPopup p.advice { font-style: italic; color: #555; background: #f1f5f9; padding: 10px; border-radius: 10px; }
+        #resultPopup button { padding: 10px 30px; margin-top:20px; font-size: 16px; }
     </style>
 </head>
 <body>
 
     <h1>Vòng Quay 12A1</h1>
-    <div class="pointer"></div>
-    <div id="wheel" class="wheel"></div>
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <div id="wheel" class="wheel"></div>
+    </div>
     <button id="spinBtn" onclick="quay()">QUAY NGAY!</button>
 
     <div id="resultPopup">
-        <h2 id="rScore" style="color: #1e3a8a; margin:0;"></h2>
-        <p id="rWish" style="font-weight: bold; margin: 15px 0;"></p>
-        <p id="rAdvice" style="font-style: italic; color: #555; font-size: 0.9em;"></p>
-        <button style="padding: 10px 20px; margin-top:10px;" onclick="dongPopup()">Đóng</button>
+        <h2 id="rScore"></h2>
+        <p id="rWish"></p>
+        <p id="rAdvice" class="advice"></p>
+        <button onclick="dongPopup()">Đóng</button>
     </div>
 
     <script>
         const scores = [800, 900, 1000, 1050, 1200];
-        const wishes = ["Đỉnh quá! Xứng đáng là dân 12A1!", "Kết quả này cho thấy bạn là người có thực lực!", "Wow, vận may đang mỉm cười với bạn!"];
-        const advices = ["Nhớ tô phiếu cẩn thận nhé!", "Bình tĩnh, đọc kỹ đề trước khi tô!", "Đừng vội vàng, cứ chắc chắn từng câu một!"];
+        const wishes = [
+            "Đỉnh quá! Bạn xứng đáng nhận điểm số này!",
+            "Chúc mừng! Phong độ của bạn rất tuyệt vời.",
+            "Wow! Kết quả này khẳng định thực lực của bạn.",
+            "Xuất sắc! Một khởi đầu thuận lợi cho 12A1.",
+            "Bản lĩnh đấy! Bạn làm rất tốt!"
+        ];
+        const advices = [
+            "💡 Lời dặn: Hãy tô phiếu thật cẩn thận nhé!",
+            "💡 Lời dặn: Giữ bình tĩnh, đọc kỹ đề bài.",
+            "💡 Lời dặn: Phân bổ thời gian hợp lý bạn ơi.",
+            "💡 Lời dặn: Sự chỉn chu là chìa khóa thành công.",
+            "💡 Lời dặn: Tĩnh tâm lại, bạn sẽ tìm ra đáp án."
+        ];
 
         function quay() {
             const btn = document.getElementById('spinBtn');
             const wheel = document.getElementById('wheel');
             btn.disabled = true;
+            
+            // Xoay ngẫu nhiên
             const deg = Math.floor(Math.random() * 3600) + 1800;
             wheel.style.transform = `rotate(${deg}deg)`;
 
@@ -66,7 +101,7 @@
                 const idx = Math.floor((deg % 360) / 72);
                 document.getElementById('rScore').innerText = scores[idx] + " VACT";
                 document.getElementById('rWish').innerText = wishes[Math.floor(Math.random() * wishes.length)];
-                document.getElementById('rAdvice').innerText = "💡 " + advices[Math.floor(Math.random() * advices.length)];
+                document.getElementById('rAdvice').innerText = advices[Math.floor(Math.random() * advices.length)];
                 document.getElementById('resultPopup').style.display = 'block';
             }, 5100);
         }
