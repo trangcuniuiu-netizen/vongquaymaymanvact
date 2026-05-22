@@ -5,28 +5,16 @@
     <title>12A1 CHINH PHỤC VACT</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            min-height: 100vh; background: #8B0000; font-family: 'Roboto', sans-serif; 
-        }
+        body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: #8B0000; font-family: 'Roboto', sans-serif; }
         h1 { color: #FFD700; font-family: 'Montserrat', sans-serif; font-size: 45px; text-transform: uppercase; margin-bottom: 30px; text-shadow: 3px 3px 10px rgba(0,0,0,0.5); text-align: center;}
 
         .wheel-container { position: relative; }
-        .wheel { 
-            width: 350px; height: 350px; border-radius: 50%; border: 15px solid #FFD700;
-            position: relative; transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.2);
-            background: conic-gradient(
-                #d32f2f 0deg 72deg, #f57c00 72deg 144deg, #fbc02d 144deg 216deg, 
-                #388e3c 216deg 288deg, #1976d2 288deg 360deg
-            );
-        }
-        
-        /* Tạo các đường kẻ phân chia */
-        .wheel::before { content: ""; position: absolute; top: 0; left: 50%; width: 4px; height: 50%; transform-origin: bottom; background: white; transform: rotate(72deg); z-index: 1; }
-        .wheel::after { content: ""; position: absolute; top: 0; left: 50%; width: 4px; height: 50%; transform-origin: bottom; background: white; transform: rotate(144deg); z-index: 1; }
-        .line3 { position: absolute; top: 0; left: 50%; width: 4px; height: 50%; transform-origin: bottom; background: white; transform: rotate(216deg); z-index: 1; }
-        .line4 { position: absolute; top: 0; left: 50%; width: 4px; height: 50%; transform-origin: bottom; background: white; transform: rotate(288deg); z-index: 1; }
+        .wheel { width: 350px; height: 350px; border-radius: 50%; border: 15px solid #FFD700; position: relative; transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99); box-shadow: 0 0 50px rgba(0,0,0,0.5); background: conic-gradient(#d32f2f 0deg 72deg, #f57c00 72deg 144deg, #fbc02d 144deg 216deg, #388e3c 216deg 288deg, #1976d2 288deg 360deg); }
+        .wheel::before, .wheel::after, .line3, .line4 { content: ""; position: absolute; top: 0; left: 50%; width: 4px; height: 50%; transform-origin: bottom; background: white; z-index: 1; }
+        .wheel::before { transform: rotate(72deg); }
+        .wheel::after { transform: rotate(144deg); }
+        .line3 { transform: rotate(216deg); }
+        .line4 { transform: rotate(288deg); }
         
         .pointer { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid #FFD700; z-index: 10; }
 
@@ -50,20 +38,38 @@
 
     <div id="resultPopup">
         <h2 id="rScore" style="color:#d32f2f; font-size: 30px;"></h2>
-        <p id="rWish" style="font-weight:bold;"></p>
-        <p id="rAdvice" style="color:#666; font-style:italic;"></p>
-        <button onclick="document.getElementById('resultPopup').style.display='none'; document.getElementById('spinBtn').disabled=false;">Đóng</button>
+        <p id="rWish" style="font-weight:bold; font-size: 1.2em;"></p>
+        <p id="rAdvice" style="color:#444; font-style:italic; border-top: 1px solid #ddd; padding-top: 10px;"></p>
+        <button style="padding: 10px 30px; font-size: 16px;" onclick="dongPopup()">Đóng</button>
     </div>
 
+    <audio id="spinAudio" src="https://actions.google.com/sounds/v1/musical/happy_celebration.ogg"></audio>
+
     <script>
-        const scores = ["800+", "900+", "1000+", "1050+", "1200+"];
-        const wishes = ["Đỉnh cao 12A1!", "Vận may đang gọi!", "Quá xuất sắc!", "Bản lĩnh đấy!", "Đẳng cấp quá!"];
-        const advices = ["Tô phiếu thật cẩn thận nhé!", "Giữ bình tĩnh, đọc kỹ đề!", "Phân bổ thời gian hợp lý!", "Chỉn chu là chìa khóa!", "Tĩnh tâm làm bài nhé!"];
+        const scores = ["800+", "900+", "1000+", "1050+", "1200"];
+        const wishes = [
+            "Đỉnh cao phong độ! Bạn là niềm tự hào của 12A1!",
+            "Bản lĩnh chiến binh! Kết quả này dành riêng cho bạn.",
+            "Tuyệt vời! Bạn đang tiến rất gần đến giấc mơ rồi đấy!",
+            "Thật ấn tượng! Năng lực của bạn không hề có giới hạn.",
+            "Chúc mừng bạn! Một kết quả hoàn toàn xứng đáng!"
+        ];
+        const advices = [
+            "💡 Dặn dò: Tô phiếu kỹ, kiểm tra mã đề 2 lần nhé!",
+            "💡 Dặn dò: Bình tĩnh đọc kỹ từng chữ, sai một ly là đi một dặm!",
+            "💡 Dặn dò: Đừng để thời gian làm bạn rối, hãy làm chủ cuộc chơi!",
+            "💡 Dặn dò: Sự cẩn thận hôm nay là tấm vé vàng cho ngày mai!",
+            "💡 Dặn dò: Hít thở sâu, giữ cái đầu lạnh, bạn sẽ làm được!"
+        ];
 
         function quay() {
             const btn = document.getElementById('spinBtn');
             const wheel = document.getElementById('wheel');
+            const audio = document.getElementById('spinAudio');
+            
             btn.disabled = true;
+            audio.play(); // Kích hoạt nhạc
+            
             const deg = Math.floor(Math.random() * 3600) + 1800;
             wheel.style.transform = `rotate(${deg}deg)`;
 
@@ -74,6 +80,11 @@
                 document.getElementById('rAdvice').innerText = advices[Math.floor(Math.random() * advices.length)];
                 document.getElementById('resultPopup').style.display = 'block';
             }, 5100);
+        }
+
+        function dongPopup() {
+            document.getElementById('resultPopup').style.display = 'none';
+            document.getElementById('spinBtn').disabled = false;
         }
     </script>
 </body>
