@@ -2,51 +2,62 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Vòng Quay 12A1</title>
+    <title>Vòng Quay May Mắn 12A1</title>
     <style>
-        body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f8fafc; font-family: sans-serif; }
+        body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #eef2f3; font-family: sans-serif; margin: 0; }
+        h1 { color: #1e3a8a; margin-bottom: 20px; }
         
-        /* Vòng quay thiết kế sang trọng */
         .wheel { 
-            width: 300px; height: 300px; border-radius: 50%; 
-            border: 8px solid #333; position: relative; 
-            background: conic-gradient(#3b82f6 0deg 72deg, #60a5fa 72deg 144deg, #93c5fd 144deg 216deg, #bfdbfe 216deg 288deg, #dbeafe 288deg 360deg);
-            transition: transform 4s cubic-bezier(0.1, 0.7, 0.2, 1);
+            width: 320px; height: 320px; border-radius: 50%; border: 10px solid #fff;
+            position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            /* Vòng quay nhiều màu */
+            background: conic-gradient(
+                #ef4444 0deg 72deg, #f97316 72deg 144deg, #eab308 144deg 216deg, 
+                #22c55e 216deg 288deg, #3b82f6 288deg 360deg
+            );
         }
-        
-        .pointer { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #dc2626; margin-bottom: 10px; }
-
-        button { 
-            margin-top: 30px; padding: 15px 50px; font-size: 20px; font-weight: bold;
-            background: #2563eb; color: white; border: none; border-radius: 10px; cursor: pointer;
-        }
-        button:hover { background: #1d4ed8; }
+        .pointer { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #000; margin-bottom: 5px; }
+        button { margin-top: 30px; padding: 15px 40px; font-size: 20px; background: #1e3a8a; color: #fff; border: none; border-radius: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
+    <h1>Vòng Quay 12A1</h1>
     <div class="pointer"></div>
     <div id="wheel" class="wheel"></div>
-    <button id="btn" onclick="quay()">QUAY NGAY</button>
+    <button onclick="quay()">QUAY NGAY</button>
 
     <script>
+        const scores = [800, 900, 1000, 1050, 1200];
+        const wishes = [
+            "Chúc mừng bạn! Kết quả xứng đáng với nỗ lực của bạn.",
+            "Đỉnh quá! Bạn thực sự là chiến binh 12A1.",
+            "Tuyệt vời! Phong độ này sẽ giúp bạn tỏa sáng.",
+            "Wow! Vận may 12A1 đang gọi tên bạn.",
+            "Kết quả này khẳng định bản lĩnh của bạn!"
+        ];
+        const advices = [
+            "Tô phiếu cẩn thận, nhớ kiểm tra mã đề hai lần nhé.",
+            "Bình tĩnh đọc kỹ đề, vội vàng là kẻ thù của điểm số.",
+            "Phân bổ thời gian hợp lý, giữ cái đầu lạnh bạn nhé.",
+            "Sự chỉn chu trong chi tiết nhỏ tạo nên khác biệt lớn.",
+            "Giữ nhịp thở đều, tâm trí tĩnh lặng để làm bài tốt nhất."
+        ];
+
         function quay() {
-            const btn = document.getElementById('btn');
             const wheel = document.getElementById('wheel');
-            btn.disabled = true;
-            
-            const deg = Math.floor(Math.random() * 360) + 1440;
-            wheel.style.transform = `rotate(${deg}deg)`;
+            const randomDeg = Math.floor(Math.random() * 3600) + 1800;
+            wheel.style.transform = `rotate(${randomDeg}deg)`;
 
             setTimeout(() => {
-                const scores = [1200, 1050, 1000, 900, 800];
-                const finalDeg = deg % 360;
-                const index = Math.floor(finalDeg / 72);
+                const index = Math.floor((randomDeg % 360) / 72);
+                const score = scores[index];
+                const wish = wishes[Math.floor(Math.random() * wishes.length)];
+                const advice = advices[Math.floor(Math.random() * advices.length)];
                 
-                alert("Chúc mừng!!! Bạn sẽ đạt: " + scores[index] + " điểm VACT!\n\nLời dặn: Hãy luôn bình tĩnh và tô phiếu thật cẩn thận bạn nhé!");
-                
-                btn.disabled = false;
-            }, 4000);
+                alert(`🎯 ĐIỂM SỐ: ${score} VACT\n\n✨ ${wish}\n\n💡 ${advice}`);
+            }, 5100);
         }
     </script>
 </body>
