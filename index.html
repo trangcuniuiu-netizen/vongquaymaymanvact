@@ -2,140 +2,78 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Vòng Quay May Mắn Chào Xuân 12A1</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Great+Vibes&display=swap" rel="stylesheet">
-    
+    <title>12A1 CHINH PHỤC VACT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* 1. GIAO DIỆN NỀN RỰC RỠ & SANG TRỌNG */
         body { 
-            margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            background: linear-gradient(135deg, #a72828 0%, #dd2a2a 50%, #f47d7d 100%); font-family: 'Montserrat', sans-serif; 
-            overflow-x: hidden; position: relative;
+            margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            min-height: 100vh; background: #8B0000; font-family: 'Roboto', sans-serif; 
         }
+        h1 { color: #FFD700; font-family: 'Montserrat', sans-serif; font-size: 45px; text-transform: uppercase; margin-bottom: 30px; text-shadow: 3px 3px 10px rgba(0,0,0,0.5); text-align: center;}
 
-        h1 { 
-            font-family: 'Great Vibes', cursive; font-size: 60px; color: #ffeb3b; margin: 0 0 30px 0; 
-            text-shadow: 3px 3px 6px rgba(255, 235, 59, 0.5); letter-spacing: 2px;
-        }
-
-        /* 2. KHUNG VÒNG QUAY "MẠ VÀNG" LẤP LÁNH */
-        .wheel-outer-container { position: relative; }
-        
-        /* Hiệu ứng hào quang */
-        .wheel-halo { 
-            position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px;
-            border-radius: 50%; box-shadow: 0 0 80px rgba(255, 235, 59, 0.6); z-index: 0; 
-            animation: haloPulse 2s infinite alternate;
-        }
-
-        .wheel-container { position: relative; z-index: 1; }
-        
-        .pointer { 
-            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; 
-            border-top: 40px solid #ef4444; z-index: 10;
-        }
-
+        .wheel-container { position: relative; }
         .wheel { 
-            width: 320px; height: 320px; border-radius: 50%; border: 12px solid #ffffff;
+            width: 350px; height: 350px; border-radius: 50%; border: 15px solid #FFD700;
             position: relative; transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            /* Vòng quay chia 5 màu rực rỡ */
+            box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.2);
             background: conic-gradient(
-                #ef4444 0deg 72deg,    /* Đỏ */
-                #f97316 72deg 144deg,  /* Cam */
-                #eab308 144deg 216deg,  /* Vàng */
-                #22c55e 216deg 288deg,  /* Xanh lá */
-                #3b82f6 288deg 360deg   /* Xanh dương */
+                #d32f2f 0deg 72deg, #f57c00 72deg 144deg, #fbc02d 144deg 216deg, 
+                #388e3c 216deg 288deg, #1976d2 288deg 360deg
             );
         }
-        .pointer { 
-            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; 
-            border-top: 40px solid #1e3a8a; z-index: 10;
-        }
+        
+        /* Tạo các đường kẻ phân chia */
+        .wheel::before { content: ""; position: absolute; top: 0; left: 50%; width: 4px; height: 50%; transform-origin: bottom; background: white; transform: rotate(72deg); z-index: 1; }
+        .wheel::after { content: ""; position: absolute; top: 0; left: 50%; width: 4px; height: 50%; transform-origin: bottom; background: white; transform: rotate(144deg); z-index: 1; }
+        .line3 { position: absolute; top: 0; left: 50%; width: 4px; height: 50%; transform-origin: bottom; background: white; transform: rotate(216deg); z-index: 1; }
+        .line4 { position: absolute; top: 0; left: 50%; width: 4px; height: 50%; transform-origin: bottom; background: white; transform: rotate(288deg); z-index: 1; }
+        
+        .pointer { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid #FFD700; z-index: 10; }
 
-        /* 3. NÚT QUAY PHONG CÁCH "LÌ XÌ" RỰC RỠ */
-        button { 
-            margin-top: 50px; padding: 18px 60px; font-size: 20px; font-weight: bold; font-family: 'Montserrat';
-            background: #1e3a8a; color: white; border: none; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.4); transition: 0.3s;
-        }
-        button:hover { transform: scale(1.05); background: #172554; }
-        button:disabled { background: #94a3b8; cursor: not-allowed; }
-
-        /* 4. POPUP KẾT QUẢ "TET" SANG TRỌNG */
-        #resultPopup { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.98); padding: 40px; border-radius: 25px; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            text-align: center; width: 320px; z-index: 100;
-        }
-        #resultPopup h2 { color: #1e3a8a; font-family: 'Montserrat'; font-size: 28px; margin: 0; }
-        #resultPopup p { font-weight: 500; margin: 20px 0; }
-        #resultPopup p.advice { font-style: italic; color: #555; background: #f1f5f9; padding: 10px; border-radius: 10px; }
-        #resultPopup button { padding: 10px 30px; margin-top:20px; font-size: 16px; }
-
-        /* KEYFRAMES ANIMATIONS */
-        @keyframes haloPulse { 0% { opacity: 0.8; } 100% { opacity: 1; } }
+        button { margin-top: 50px; padding: 20px 60px; font-size: 22px; font-weight: bold; font-family: 'Montserrat'; background: #FFD700; color: #8B0000; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: 0.3s; }
+        button:hover { transform: scale(1.05); background: #fff; }
+        
+        #resultPopup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 40px; border-radius: 25px; text-align: center; width: 300px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); z-index: 20; }
     </style>
 </head>
 <body>
 
-    <h1>Chào Xuân 12A1</h1>
-    <div class="wheel-outer-container">
-        <div class="wheel-halo"></div>
-        <div class="wheel-container">
-            <div class="pointer"></div>
-            <div id="wheel" class="wheel"></div>
+    <h1>12A1 CHINH PHỤC VACT</h1>
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <div id="wheel" class="wheel">
+            <div class="line3"></div>
+            <div class="line4"></div>
         </div>
     </div>
-    <button id="spinBtn" onclick="quay()">QUAY NGAY!</button>
+    <button id="spinBtn" onclick="quay()">QUAY NGAY</button>
 
     <div id="resultPopup">
-        <h2 id="rScore"></h2>
-        <p id="rWish"></p>
-        <p id="rAdvice" class="advice"></p>
-        <button onclick="dongPopup()">Đóng</button>
+        <h2 id="rScore" style="color:#d32f2f; font-size: 30px;"></h2>
+        <p id="rWish" style="font-weight:bold;"></p>
+        <p id="rAdvice" style="color:#666; font-style:italic;"></p>
+        <button onclick="document.getElementById('resultPopup').style.display='none'; document.getElementById('spinBtn').disabled=false;">Đóng</button>
     </div>
 
     <script>
-        const scores = [800+, 900+, 1000+, 1050+, 1200];
-        const wishes = [
-            "Đỉnh quá! Chúc mừng bạn, kết quả xứng đáng!",
-            "Chúc mừng nhé! Phong độ của bạn rất tốt.",
-            "Wow! Kết quả này cho thấy thực lực của bạn.",
-            "Tuyệt vời! Một khởi đầu thuận lợi cho 12A1.",
-            "Xuất sắc! Bạn làm rất tốt!"
-        ];
-        const advices = [
-            "💡 Lời dặn: Hãy tô phiếu thật cẩn thận nhé!",
-            "💡 Lời dặn: Giữ bình tĩnh, đọc kỹ đề bài.",
-            "💡 Lời dặn: Phân bổ thời gian hợp lý bạn nhé.",
-            "💡 Lời dặn: Tĩnh tâm lại, bạn sẽ tìm ra đáp án.",
-            "💡 Lời dặn: Sự chỉn chu là chìa khóa thành công."
-        ];
+        const scores = ["800+", "900+", "1000+", "1050+", "1200+"];
+        const wishes = ["Đỉnh cao 12A1!", "Vận may đang gọi!", "Quá xuất sắc!", "Bản lĩnh đấy!", "Đẳng cấp quá!"];
+        const advices = ["Tô phiếu thật cẩn thận nhé!", "Giữ bình tĩnh, đọc kỹ đề!", "Phân bổ thời gian hợp lý!", "Chỉn chu là chìa khóa!", "Tĩnh tâm làm bài nhé!"];
 
         function quay() {
             const btn = document.getElementById('spinBtn');
             const wheel = document.getElementById('wheel');
             btn.disabled = true;
-            
-            // Xoay ngẫu nhiên
             const deg = Math.floor(Math.random() * 3600) + 1800;
             wheel.style.transform = `rotate(${deg}deg)`;
 
             setTimeout(() => {
                 const idx = Math.floor((deg % 360) / 72);
-                document.getElementById('rScore').innerText = scores[idx] + " VACT";
+                document.getElementById('rScore').innerText = scores[idx] + " Điểm";
                 document.getElementById('rWish').innerText = wishes[Math.floor(Math.random() * wishes.length)];
                 document.getElementById('rAdvice').innerText = advices[Math.floor(Math.random() * advices.length)];
                 document.getElementById('resultPopup').style.display = 'block';
             }, 5100);
-        }
-
-        function dongPopup() {
-            document.getElementById('resultPopup').style.display = 'none';
-            document.getElementById('spinBtn').disabled = false;
         }
     </script>
 </body>
